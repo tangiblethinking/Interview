@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Radix Recruiter Interview Cheat Sheet</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --accent: #007aff;
+      --accent-hover: #0066cc;
+      --separator: #d2d2d7;
+      --sidebar-bg: rgba(255,255,255,0.72);
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --radius: 14px;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --surface: #1c1c1e;
+        --text: #f5f5f7;
+        --text-secondary: #aeaeb2;
+        --separator: #38383a;
+        --sidebar-bg: rgba(28,28,30,0.8);
+        --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid var(--separator);
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar .subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      transition: background 0.15s ease;
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(0,122,255,0.12);
+      color: var(--accent);
+    }
+
+    .nav-item.active {
+      font-weight: 600;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 32px 40px 80px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--text);
+      margin-bottom: 28px;
+      outline: none;
+      min-height: 48px;
+    }
+
+    .search-bar::placeholder { color: var(--text-secondary); }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      margin-bottom: 8px;
+    }
+
+    .lead {
+      font-size: 17px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      max-width: 680px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card p, .card li {
+      font-size: 15.5px;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .card ul { padding-left: 20px; }
+
+    .phrase {
+      background: rgba(0,122,255,0.08);
+      border-left: 3px solid var(--accent);
+      padding: 12px 56px 12px 16px;
+      border-radius: 0 10px 10px 0;
+      margin: 12px 0;
+      font-style: italic;
+      position: relative;
+      line-height: 1.55;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 32px;
+    }
+
+    .copy-btn:hover { background: var(--accent-hover); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .accordion {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .accordion.open .accordion-content {
+      max-height: 1200px;
+    }
+
+    .dark-toggle {
+      position: fixed;
+      bottom: calc(20px + var(--safe-bottom));
+      right: 20px;
+      background: var(--surface);
+      border: 1px solid var(--separator);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-size: 20px;
+      z-index: 10;
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 780px) {
+      .app {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding: 12px 12px 8px;
+        border-right: none;
+        border-bottom: 1px solid var(--separator);
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .sidebar h1 {
+        font-size: 18px;
+        display: inline-block;
+        margin-right: 12px;
+        margin-bottom: 0;
+        vertical-align: middle;
+      }
+
+      .sidebar .subtitle {
+        display: none;
+      }
+
+      .nav-item {
+        display: inline-block;
+        padding: 10px 14px;
+        margin: 0 4px 8px 0;
+        font-size: 14px;
+        min-height: 40px;
+        vertical-align: middle;
+      }
+
+      .main {
+        padding: 16px 16px calc(80px + var(--safe-bottom));
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .lead {
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        padding: 16px 18px;
+      }
+
+      .phrase {
+        padding: 14px 52px 14px 14px;
+        font-size: 15.5px;
+      }
+
+      .copy-btn {
+        top: 8px;
+        right: 8px;
+        padding: 8px 12px;
+        min-height: 36px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .search-bar {
+        position: sticky;
+        top: 56px;
+        z-index: 15;
+        margin-bottom: 20px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .main { padding: 12px 12px calc(80px + var(--safe-bottom)); }
+      .phrase { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Radix Interview</h1>
+      <div class="subtitle">Product Designer · Scottsdale</div>
+      <a class="nav-item active" data-section="why">Why Radix</a>
+      <a class="nav-item" data-section="skills">My AI Toolkit</a>
+      <a class="nav-item" data-section="architecture">Architecture</a>
+      <a class="nav-item" data-section="mapping">Experience Mapping</a>
+      <a class="nav-item" data-section="platform">Platform</a>
+      <a class="nav-item" data-section="ai-layer">AI Layer</a>
+      <a class="nav-item" data-section="questions">Questions</a>
+      <a class="nav-item" data-section="phrases">Quick Phrases</a>
+    </aside>
+
+    <main class="main">
+      <input type="search" class="search-bar" placeholder="Search the cheat sheet..." id="search" />
+
+      <!-- WHY RADIX -->
+      <section id="why" class="section active">
+        <h2>Why I’m Looking at Radix</h2>
+        <p class="lead">My positioning statement for the opening of the conversation.</p>
+        <div class="card">
+          <div class="phrase">
+            In my current lead role, I’ve managed a mature enterprise platform, which rounded out my discipline around design system governance, platform stability, and UX debt.
+            At the same time, I’ve been heavily focused on applied AI in two ways:
+            <br><br>
+            1. In the Product: I designed the UX for a multi-tenant, context-injected AI system—using API calls to pair backend system variables with individual user transaction data, turning raw database records into tailored, in-workflow recommendations.
+            <br><br>
+            2. In my Craft (DesignOps): I built an agentic AI pipeline of specialized models trained to convert design tokens and specs directly into production-ready, WCAG-compliant code to streamline developer handoff.
+            <br><br>
+            Having mastered both sides—long-term platform governance plus hands-on AI integration in both product and process—I’m looking to bring that toolkit to an expanding platform like Radix, where AI-native workflows and rapid execution are central to where the team is going.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS / AI TOOLKIT -->
+      <section id="skills" class="section">
+        <h2>My AI Toolkit Today</h2>
+        <p class="lead">My core capability narrative.</p>
+        <div class="card">
+          <div class="phrase">
+            I designed the UX and front-end integration for a multi-tenant, context-injected AI system. Architecturally, I built UI workflows powered by RAG and dynamic prompt pipelines via REST API calls. On every prompt request, my middleware combined constant back-office system variables with individual user transaction data to generate personalized, context-aware recommendations directly inside the virtual office workflow.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h3>Product Execution</h3>
+            <p>I architect in-product AI features (context injection, dynamic prompt payloads via API).</p>
+          </div>
+          <div class="card">
+            <h3>DesignOps Innovation</h3>
+            <p>I build automated AI agent pipelines that generate compliant code directly from design tokens, closing the gap between Figma and engineering.</p>
+          </div>
+          <div class="card">
+            <h3>Senior Maturity</h3>
+            <p>I respect platform stability, governance, and system constraints while pushing high-velocity AI automation.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCHITECTURE -->
+      <section id="architecture" class="section">
+        <h2>Architecture Deep Dive</h2>
+        <p class="lead">Details I use when they probe technical depth.</p>
+
+        <div class="card accordion" onclick="this.classList.toggle('open')">
+          <h3>1. Core System Architecture: Dynamic Context Ingestion / Context-Injected RAG</h3>
+          <div class="accordion-content">
+            <p><strong>What it is:</strong> Instead of fine-tuning or training a heavy custom model from scratch, the application I designed acts as an orchestration layer. Upon a user request or trigger, it programmatically retrieves constant system variables (e.g., tenant rules, platform parameters, incentive structures) alongside variable user context (e.g., user profile, active session data, historical transactions) and injects them into a structured prompt template payload sent via API to an LLM provider (e.g., Gemini, OpenAI).</p>
+            <p><strong>Why it matters:</strong> It keeps the system lightweight, secure, and cost-effective while ensuring every API response is deterministic and grounded in real-time back-office data.</p>
+          </div>
+        </div>
+
+        <div class="card accordion" onclick="this.classList.toggle('open')">
+          <h3>2. Software SaaS Pattern: Multi-Tenant AI Middleware</h3>
+          <div class="accordion-content">
+            <p><strong>What it is:</strong> In a back-office or "virtual office" setting, the underlying model architecture, constant parameters, and UI logic remain uniform across the entire platform, but the data payload is strictly isolated per tenant/user.</p>
+            <p><strong>Why it matters:</strong> I designed a pattern where the AI model serves as a stateless processing engine, while my API layer manages tenancy, variable injection, and state management before handing the rendered output to the UI.</p>
+          </div>
+        </div>
+
+        <div class="card accordion" onclick="this.classList.toggle('open')">
+          <h3>3. UX/UI Paradigm: Intent-Driven & Contextual Decision-Support UI</h3>
+          <div class="accordion-content">
+            <p><strong>What it is:</strong> From a product design perspective, I didn't just build a generic, open-ended chatbot; I built an Intent-Driven Decision-Support System.</p>
+            <p><strong>Why it matters:</strong> The UI takes raw, complex database records and transforms them into high-value, actionable recommendations (e.g., identifying personalized expansion or incentive opportunities) directly within the user's workflow.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- MAPPING -->
+      <section id="mapping" class="section">
+        <h2>Experience Mapped to Radix Requirements</h2>
+        <p class="lead">My four strongest alignments with ready phrasing.</p>
+
+        <div class="card">
+          <h3>Requirement 1: 5+ years designing complex B2B / SaaS data tools & dashboards</h3>
+          <p><strong>Evidence:</strong> Freeport-McMoRan real-time operational simulation dashboards (30% efficiency gain). Siemens multi-dimensional data visualization models.</p>
+          <div class="phrase">
+            I specialize in high-density B2B SaaS platforms—like my work at Freeport-McMoRan and Siemens designing real-time operational simulation dashboards and multi-dimensional industrial data models.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Requirement 2: Designing AI-native workflows & automated insights</h3>
+          <p><strong>Evidence:</strong> AI-native workflows, automated handoff pipelines, design-to-code, prompt engineering, multi-agent RAG systems.</p>
+          <div class="phrase">
+            I’ve architected in-product AI workflows where API calls dynamically pair backend system variables with live user data to generate personalized, in-workflow recommendations.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Requirement 3: Advanced Figma skills, tokens, variables, & code-adjacent prototyping</h3>
+          <p><strong>Evidence:</strong> Plexus design system scaled component reuse from 60% to 90% via modular UI and automated tokens. Design-to-code pipelines connecting Figma to React/Next.js.</p>
+          <div class="phrase">
+            In Figma, I build deeply systemized component libraries using variables and tokens, and I bridge design to engineering by creating automated pipelines that connect design specs directly to React and Next.js codebases.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Requirement 4: Comfort with ambiguity & cross-functional partnership in a fast-paced setup</h3>
+          <p><strong>Evidence:</strong> OpenTech kiosk redesign (+75% completion). Secure transaction workflows under regulatory constraints. Cross-functional partnerships at Plexus.</p>
+          <div class="phrase">
+            I thrive in fast-paced environments where I partner directly with Product and Engineering to take complex, ambiguous problems—from heavy data flows to secure transactions—from first sketch to shipped product.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLATFORM -->
+      <section id="platform" class="section">
+        <h2>What I Understand of the Role & Platform</h2>
+        <p class="lead">My understanding of Radix products and key workflows.</p>
+
+        <div class="card">
+          <h3>1. Radix Intelligence & Research</h3>
+          <p>Primary research engine for asset managers, brokers, and investors to track local multifamily rental markets in real time.</p>
+          <ul>
+            <li>Automated Comp Selection</li>
+            <li>Unit-Level Analytics (rent, occupancy, concessions, traffic)</li>
+            <li>Market Signals Dashboard</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>2. Radix Underwriting & ProForma</h3>
+          <p>Financial modeling workspace for acquisition teams, lenders, and investment committees (powered by the redIQ acquisition).</p>
+          <ul>
+            <li>Interactive Deal Workspaces</li>
+            <li>Real-Time Scenario Testing (sliders, dynamic proforma)</li>
+            <li>Investment Committee Handoffs (PDF/Excel exports)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>3. Radix Benchmark & Performance</h3>
+          <p>For property owners and third-party managers to track operational performance against peer properties in the same micro-market.</p>
+          <ul>
+            <li>Portfolio Roster Management</li>
+            <li>Competitive Positioning Matrix</li>
+            <li>Reforecasting & Owner Reporting</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>4. RealRents & Public Market Intelligence</h3>
+          <p>Consumer-facing and public data pipeline streaming direct rent rolls, availability, and concessions from PMS systems of record.</p>
+          <ul>
+            <li>Data hygiene dashboards</li>
+            <li>Public market listing views</li>
+            <li>Automated verification tools</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- AI LAYER -->
+      <section id="ai-layer" class="section">
+        <h2>Where the AI Layer Fits</h2>
+        <p class="lead">Design challenges I see highlighted in the job post.</p>
+        <div class="card">
+          <ul>
+            <li><strong>Conversational Deal Modeling:</strong> “Show me all stabilized 2-bedroom comps in South Scottsdale with high renovation upside.”</li>
+            <li><strong>Automated Anomaly & Signal Detection:</strong> AI alerting when a competitor silently drops prices or introduces heavy concessions.</li>
+            <li><strong>Intelligent Proforma Generation:</strong> Auto-populating financial model baselines from raw Comp data using dynamic context logic.</li>
+          </ul>
+          <div class="phrase">
+            I see the opportunity to move the platform from static dashboards to intelligent, conversational, and predictive decision-support tools — while evolving the design system for consistency as new AI and analytics features are deployed.
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUESTIONS -->
+      <section id="questions" class="section">
+        <h2>Questions to Ask</h2>
+        <p class="lead">Strong, curious, and role-specific questions I plan to ask.</p>
+
+        <div class="card">
+          <h3>On Product Maturity</h3>
+          <div class="phrase">
+            How is the design team currently structured across the Product pods in Scottsdale, and how closely are designers partnering with the data/AI engineering teams on these new workflow initiatives?
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>On the Tech / Design Stack</h3>
+          <div class="phrase">
+            I know the team relies heavily on advanced Figma workflows and token systems. How mature is the design system right now as you layer on these new AI-native features?
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>On Next Steps</h3>
+          <div class="phrase">
+            Based on my background scaling complex data architectures and building applied AI features, what does the ideal profile look like for the person stepping into this role, and what are the next steps in the process?
+            <button class="copy-btn" onclick="copyPhrase(this)">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICK PHRASES -->
+      <section id="phrases" class="section">
+        <h2>Quick Phrases</h2>
+        <p class="lead">Short, high-impact lines I can drop in.</p>
+        <div class="card">
+          <div class="phrase">I design AI-native interface patterns: moving from static dashboards to intelligent, conversational, and predictive decision-support tools.</div>
+          <div class="phrase">I scale design systems: evolving component architecture, tokens, and variables in Figma as new AI and analytics features are deployed.</div>
+          <div class="phrase">I refine complex data visualization: improving information architecture for high-stakes financial modeling, property benchmarking, and yield analytics.</div>
+          <div class="phrase">I turn dense market data and financial models into experiences that feel simple, fast, and trustworthy — especially when AI is part of the interface.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <button class="dark-toggle" onclick="toggleDark()" title="Toggle appearance">◐</button>
+
+  <script>
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById(item.dataset.section).classList.add('active');
+        document.getElementById('search').value = '';
+        filterContent('');
+      });
+    });
+
+    // Search
+    const search = document.getElementById('search');
+    search.addEventListener('input', (e) => filterContent(e.target.value.toLowerCase()));
+
+    function filterContent(query) {
+      document.querySelectorAll('.section.active .card, .section.active .phrase').forEach(el => {
+        const text = el.textContent.toLowerCase();
+        el.style.display = text.includes(query) || query === '' ? '' : 'none';
+      });
+    }
+
+    // Copy
+    function copyPhrase(btn) {
+      const phrase = btn.parentElement;
+      const text = phrase.innerText.replace('Copy', '').trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => btn.textContent = original, 1500);
+      });
+    }
+
+    // Dark mode toggle
+    function toggleDark() {
+      document.body.classList.toggle('force-dark');
+      if (document.body.classList.contains('force-dark')) {
+        document.documentElement.style.setProperty('--bg', '#000000');
+        document.documentElement.style.setProperty('--surface', '#1c1c1e');
+        document.documentElement.style.setProperty('--text', '#f5f5f7');
+        document.documentElement.style.setProperty('--text-secondary', '#aeaeb2');
+        document.documentElement.style.setProperty('--separator', '#38383a');
+        document.documentElement.style.setProperty('--sidebar-bg', 'rgba(28,28,30,0.8)');
+      } else {
+        document.documentElement.style.setProperty('--bg', '');
+        document.documentElement.style.setProperty('--surface', '');
+        document.documentElement.style.setProperty('--text', '');
+        document.documentElement.style.setProperty('--text-secondary', '');
+        document.documentElement.style.setProperty('--separator', '');
+        document.documentElement.style.setProperty('--sidebar-bg', '');
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      const items = [...document.querySelectorAll('.nav-item')];
+      const current = items.findIndex(i => i.classList.contains('active'));
+      if (e.key === 'ArrowDown' && current < items.length - 1) items[current + 1].click();
+      if (e.key === 'ArrowUp' && current > 0) items[current - 1].click();
+    });
+  </script>
+</body>
+</html>
